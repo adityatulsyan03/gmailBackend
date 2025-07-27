@@ -92,6 +92,7 @@
     <label for="google-token">Google Access Token</label>
     <input type="text" id="google-token" readonly placeholder="Token will appear here after authentication" />
     <button id="auth-btn">Authenticate with Google</button>
+    <button id="logout-btn">Logout</button>
 
     <div id="auth-error" class="error"></div>
     <div id="auth-success" class="success"></div>
@@ -114,7 +115,8 @@
 
 <section id="email-list-section" style="margin-top:40px;">
     <h2>Recent Emails</h2>
-    <div id="loading-msg" class="loading">Loading emails...</div>
+    <button id="reload-btn">Reload</button>
+    <div id="loading-msg" class="loading" style="display: none;">Loading emails...</div>
     <div id="list-error" class="error"></div>
     <ul id="email-list"></ul>
 </section>
@@ -274,14 +276,26 @@
         }
     });
 
+    async function logout() {
+        try {
+            const response = await fetch(`${apiBaseUrl}/logout`, { method: 'POST' });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('google-token').value = '';
+                document.getElementById('email-list').innerHTML = '';
+                showSuccess('auth-success', 'Logged out successfully!');
+            } else {
+                showError('auth-error', data.error || 'Logout failed');
+            }
+        } catch (error) {
+            showError('auth-error', 'Logout failed: ' + error.message);
+        }
+    }
+
     // Event listeners
     document.getElementById('auth-btn').addEventListener('click', authenticateWithGoogle);
-
-    // Initial load
-    fetchEmails();('click', authenticateWithGoogle);
-
-    // Initial load
-    fetchEmails();
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('reload-btn').addEventListener('click', fetchEmails);
 </script>
 </body>
 </html>

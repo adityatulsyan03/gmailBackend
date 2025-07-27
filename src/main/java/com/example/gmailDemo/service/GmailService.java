@@ -44,7 +44,7 @@ public class GmailService {
     public String getAuthorizationUrl() throws Exception {
         initFlow();
         return flow.newAuthorizationUrl()
-                .setRedirectUri("http://localhost:8000/api/gmail/callback")
+                .setRedirectUri("http://localhost:8080/api/gmail/callback")
                 .build();
     }
 
@@ -68,5 +68,12 @@ public class GmailService {
                     .setApplicationName(APPLICATION_NAME).build();
         }
         return this.gmailService;
+    }
+
+    public void clearCredentials() throws Exception {
+        initFlow();
+        flow.getCredentialDataStore().delete("user");
+        this.credential = null;
+        this.gmailService = null;
     }
 }
